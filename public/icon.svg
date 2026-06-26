@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Background -->
+  <rect width="256" height="256" rx="48" fill="#7C3AED"/>
+  <!-- Shopping bag body -->
+  <path d="M80 100 L88 180 Q88 188 96 188 L160 188 Q168 188 168 180 L176 100 Z" fill="white" opacity="0.95"/>
+  <!-- Shopping bag handle -->
+  <path d="M104 100 Q104 72 128 72 Q152 72 152 100" fill="none" stroke="white" stroke-width="10" stroke-linecap="round"/>
+  <!-- C letter overlay for Creatdrop -->
+</svg>

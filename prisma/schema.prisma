@@ -1,0 +1,152 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Profile {
+  id             String      @id @default(cuid())
+  userId         String      @unique
+  username       String      @unique
+  name           String
+  bio            String?
+  plan           Plan        @default(FREE)
+  proExpiresAt   DateTime?   // null = no expiry (paid subscription); set when PRO granted via promo
+  foundingCreator Boolean    @default(false)
+  payoutEmail    String?     // creator's PayPal email for manual weekly payouts (v1)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  links          Link[]
+  products       Product[]
+  promoCodeUses  PromoCodeUse[]
+}
+
+model Link {
+  id        String   @id @default(cuid())
+  profileId String
+  title     String
+  url       String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  profileId   String
+  title       String
+  description String?
+  price       Int      // cents (e.g. 999 = $9.99)
+  fileKey     String   // Vercel Blob URL
+  fileName    String
+  fileSize    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  sales       Sale[]
+}
+
+model Sale {
+  id                  String    @id @default(cuid())
+  productId           String
+  buyerEmail          String    @default("pending")
+  amountPaid          Int       @default(0) // cents; set by webhook
+  paddleTransactionId String?   @unique     // null until Paddle webhook confirms payment
+  downloadToken       String    @unique @default(cuid())
+  downloadedAt        DateTime?
+  paidOutAt           DateTime? // set when board manually transfers payout to creator via PayPal
+  payoutAmount        Int?      // cents actually paid to creator after Paddle's fee (null until confirmed)
+  createdAt           DateTime  @default(now())
+  product             Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model WaitlistEntry {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String   @default("landing")
+  createdAt DateTime @default(now())
+}
+
+model PromoCode {
+  id             String         @id @default(cuid())
+  code           String         @unique
+  monthsGranted  Int            @default(3)
+  maxUses        Int            @default(5)
+  usedCount      Int            @default(0)
+  foundingCreator Boolean       @default(false) // marks redeemers as founding creators
+  expiresAt      DateTime?
+  createdAt      DateTime       @default(now())
+  uses           PromoCodeUse[]
+}
+
+model PromoCodeUse {
+  id          String    @id @default(cuid())
+  promoCodeId String
+  profileId   String
+  redeemedAt  DateTime  @default(now())
+  promoCode   PromoCode @relation(fields: [promoCodeId], references: [id])
+  profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([promoCodeId, profileId])
+}
+
+enum Plan {
+  FREE
+  PRO
+}
+
+model Waitlist {
+  id                String          @id @default(cuid())
+  slug              String          @unique
+  ownerId           String          // Clerk userId of the creator
+  name              String
+  headline          String
+  rewardCopy        String
+  referralWeight    Int             @default(10)
+  brandColor        String          @default("#7c3aed")
+  logoUrl           String?
+  isPoweredByHidden Boolean         @default(false)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  signups           WaitlistSignup[]
+}
+
+model WaitlistSignup {
+  id            String          @id @default(cuid())
+  waitlistId    String
+  email         String
+  name          String?
+  referrerId    String?
+  referralCount Int             @default(0)
+  basePosition  Int
+  createdAt     DateTime        @default(now())
+  waitlist      Waitlist        @relation(fields: [waitlistId], references: [id], onDelete: Cascade)
+  referrer      WaitlistSignup? @relation("ReferralChain", fields: [referrerId], references: [id])
+  referrals     WaitlistSignup[] @relation("ReferralChain")
+
+  @@unique([waitlistId, email])
+  @@index([waitlistId])
+}
+
+model OgCustomer {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  customerKey          String   @unique @default(cuid())
+  plan                 OgPlan   @default(FREE)
+  logoUrl              String?
+  primaryColor         String   @default("#7c3aed")
+  secondaryColor       String   @default("#1e293b")
+  fontFamily           String   @default("Inter")
+  paddleSubscriptionId String?
+  imagesServed         Int      @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+enum OgPlan {
+  FREE
+  PRO
+}

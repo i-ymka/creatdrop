@@ -16,7 +16,7 @@ Creators selling digital products lose a slice of every sale to platform fees. G
 
 ## What Creatdrop does
 
-Your own storefront at `/u/username`, your own checkout, and **0% Creatdrop commission** (standard payment processing applies).
+Your own storefront at `/@username`, your own checkout, and **0% Creatdrop commission** (standard payment processing applies).
 
 ```
 claim storefront → upload product → buyer checks out → file delivered → you keep more
@@ -38,11 +38,11 @@ Files are delivered through secure, expiring signed URLs. Payments run through y
 
 ## Roadmap
 
-- [x] Creator storefronts at `/u/username`
+- [x] Creator storefronts at `/@username`
 - [x] Digital product upload + signed-URL file delivery
 - [x] Paddle subscriptions (Pro) + one-time product checkout
 - [x] Webhook-driven entitlements — activation, cancellation, refund/chargeback all sync the plan
-- [x] Free/Pro limits enforced (5 products free, unlimited on Pro)
+- [x] Webhook-synced Free/Pro plans — unlimited products on both tiers, Pro lifts the 5-link cap
 - [x] Public marketplace + programmatic SEO blog (80+ pages)
 - [ ] License types (personal / commercial / resale)
 - [ ] File watermarking & leak detection

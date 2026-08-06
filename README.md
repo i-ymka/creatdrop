@@ -42,7 +42,7 @@ Files are delivered through secure, expiring signed URLs. Payments run through y
 - [x] Digital product upload + signed-URL file delivery
 - [x] Paddle subscriptions (Pro) + one-time product checkout
 - [x] Webhook-driven entitlements — activation, cancellation, refund/chargeback all sync the plan
-- [x] Webhook-synced Free/Pro plans — unlimited products on both tiers, Pro lifts the 5-link cap
+- [x] Webhook-synced plans — activation, cancellation and refunds all update entitlements
 - [x] Public marketplace + programmatic SEO blog (80+ pages)
 - [ ] License types (personal / commercial / resale)
 - [ ] File watermarking & leak detection
